@@ -12,7 +12,7 @@ function mostrarMenu() {
     const menu = `Menú Interactivo:
   1. Listar Películas
   2. Agregar Película
-  3. Marcar Película como Vista
+  3. Marcar Película como Vista/No Vista
   4. Salir
   Elige una opción:`;
     console.log(menu);
@@ -55,22 +55,37 @@ function agregarPelicula() {
     }
 }
 function marcarPeliculaComoVista() {
-    const idInput = prompt("Ingrese el ID de la película a marcar como vista: ");
-    if (idInput) {
-        const id = parseInt(idInput, 10);
-        let pelicula;
-        for (let i = 0; i < peliculas.length; i++) {
-            if (peliculas[i].id === id) {
-                pelicula = peliculas[i];
-                break;
+    if (peliculas.length === 0) {
+        console.log(chalk_1.default.red("No hay películas registradas."));
+    }
+    else {
+        console.table(peliculas);
+        const idInput = prompt("Ingrese el ID de la película a marcar como vista (1-" + peliculas.length + "): ");
+        if (idInput) {
+            const id = parseInt(idInput, 10);
+            let pelicula;
+            for (let i = 0; i < peliculas.length; i++) {
+                if (peliculas[i].id === id) {
+                    pelicula = peliculas[i];
+                    break;
+                }
+            }
+            if (pelicula) {
+                if (pelicula.watched) {
+                    pelicula.watched = false;
+                    console.log(chalk_1.default.magenta(`La película "${pelicula.title}" ha sido marcada como no vista.`));
+                }
+                else {
+                    pelicula.watched = true;
+                    console.log(chalk_1.default.cyan(`La película "${pelicula.title}" ha sido marcada como vista.`));
+                }
+            }
+            else {
+                console.log(chalk_1.default.red("No se encontró una película con ese ID."));
             }
         }
-        if (pelicula) {
-            pelicula.watched = true;
-            console.log(chalk_1.default.green(`La película "${pelicula.title}" ha sido marcada como vista.`));
-        }
         else {
-            console.log(chalk_1.default.red("No se encontró una película con ese ID."));
+            console.log(chalk_1.default.red("El ID no puede estar vacío"));
         }
     }
     waitAndClear();
@@ -78,6 +93,25 @@ function marcarPeliculaComoVista() {
 function waitAndClear() {
     const anyKey = prompt('');
     console.clear();
+}
+// Peliculas de prueba
+function testMovies() {
+    peliculas.push({
+        id: nextId++,
+        title: "Inception",
+        director: "Christopher Nolan",
+        watched: false,
+    }, {
+        id: nextId++,
+        title: "El Padrino",
+        director: "Francis Ford Coppola",
+        watched: true,
+    }, {
+        id: nextId++,
+        title: "Interestellar",
+        director: "Cristopher Nolan",
+        watched: false,
+    });
 }
 function iniciarMenu() {
     let opcion;
@@ -96,11 +130,16 @@ function iniciarMenu() {
                 marcarPeliculaComoVista();
                 break;
             case '4':
-                console.log("Saliendo del programa.");
+                console.log(chalk_1.default.yellow("Saliendo del programa."));
+                waitAndClear();
                 break;
             default:
-                console.log("Opción no válida, intente de nuevo.");
+                console.log(chalk_1.default.red("Opción no válida, intente de nuevo."));
+                waitAndClear();
         }
     } while (opcion !== '4');
 }
+console.clear();
+//Añado peliculas de prueba
+testMovies();
 iniciarMenu();

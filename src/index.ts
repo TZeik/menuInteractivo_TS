@@ -10,14 +10,14 @@ interface Pelicula {
 
 const prompt = promptSync({ sigint: true });
 const peliculas: Pelicula[] = [];
-  let nextId = 1;
+let nextId = 1;
   
 function mostrarMenu(): string | null {
     const menu = 
     `Menú Interactivo:
   1. Listar Películas
   2. Agregar Película
-  3. Marcar Película como Vista
+  3. Marcar Película como Vista/No Vista
   4. Salir
   Elige una opción:`;
     console.log(menu);
@@ -54,7 +54,11 @@ function agregarPelicula(): void {
 }
   
 function marcarPeliculaComoVista(): void {
-    const idInput = prompt("Ingrese el ID de la película a marcar como vista: ");
+  if (peliculas.length === 0){
+    console.log(chalk.red("No hay películas registradas."));
+  }else{
+    console.table(peliculas);
+    const idInput = prompt("Ingrese el ID de la película a marcar como vista (1-"+peliculas.length+"): ");
     if (idInput) {
       const id = parseInt(idInput, 10);
       let pelicula: Pelicula | undefined;
@@ -65,44 +69,81 @@ function marcarPeliculaComoVista(): void {
         }
       }
       if (pelicula) {
-        pelicula.watched = true;
-        console.log(chalk.green(`La película "${pelicula.title}" ha sido marcada como vista.`));
+        if(pelicula.watched){
+          pelicula.watched = false;
+          console.log(chalk.magenta(`La película "${pelicula.title}" ha sido marcada como no vista.`));
+        }else{
+          pelicula.watched = true;
+          console.log(chalk.cyan(`La película "${pelicula.title}" ha sido marcada como vista.`));
+        }
       } else {
         console.log(chalk.red("No se encontró una película con ese ID."));
       }
+    } else {
+      console.log(chalk.red("El ID no puede estar vacío"));
     }
-    waitAndClear();
   }
+  waitAndClear();
+}
   
 
-  function waitAndClear(): void{
+function waitAndClear(): void{
     const anyKey = prompt('')
     console.clear();
-  }
+}
 
-  function iniciarMenu(): void {
-    let opcion: string | null;
-    do {
-      opcion = mostrarMenu();
-      if (opcion === null) break;
-      switch (opcion.trim()) {
-        case '1':
-          listarPeliculas();
-          break;
-        case '2':
-          agregarPelicula();
-          break;
-        case '3':
-          marcarPeliculaComoVista();
-          break;
-        case '4':
-          console.log("Saliendo del programa.");
-          break;
-        default:
-          console.log("Opción no válida, intente de nuevo.");
-      }
-    } while (opcion !== '4');
-  }
+  // Peliculas de prueba
+function testMovies(): void {
+  peliculas.push(
+    {
+      id: nextId++,
+      title: "Inception",
+      director: "Christopher Nolan",
+      watched: false,
+    },
+    {
+      id: nextId++,
+      title: "El Padrino",
+      director: "Francis Ford Coppola",
+      watched: true,
+    },
+    {
+      id: nextId++,
+      title: "Interestellar",
+      director: "Cristopher Nolan",
+      watched: false,
+    }
+  );
+}
+
+function iniciarMenu(): void {
+  let opcion: string | null;
+  do {
+    opcion = mostrarMenu();
+    if (opcion === null) break;
+    switch (opcion.trim()) {
+      case '1':
+        listarPeliculas();
+        break;
+      case '2':
+        agregarPelicula();
+        break;
+      case '3':
+        marcarPeliculaComoVista();
+        break;
+      case '4':
+        console.log(chalk.yellow("Saliendo del programa."));
+        waitAndClear();
+        break;
+      default:
+        console.log(chalk.red("Opción no válida, intente de nuevo."));
+        waitAndClear();
+    }
+  } while (opcion !== '4');
+}
   
-  iniciarMenu();
-  
+console.clear();
+//Añado peliculas de prueba
+testMovies();
+
+iniciarMenu();
