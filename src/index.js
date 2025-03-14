@@ -55,7 +55,7 @@ function agregarPelicula() {
     }
 }
 function marcarPeliculaComoVista() {
-    const idInput = prompt("Ingrese el ID de la película a marcar como vista:");
+    const idInput = prompt("Ingrese el ID de la película a marcar como vista: ");
     if (idInput) {
         const id = parseInt(idInput, 10);
         let pelicula;
