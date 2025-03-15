@@ -1,7 +1,7 @@
-import { testMovies, iniciarMenu } from './services/service';
+import { loadMoviesFromFile, iniciarMenu } from './services/service';
 
 console.clear();
 
-testMovies();
+loadMoviesFromFile();
 
 iniciarMenu();
